@@ -6,7 +6,10 @@ import urllib.request
 import webbrowser
 import pyttsx3
 import speech_recognition as sr
+
 from gnews import GNews
+from gemini_client import ask_gemini
+
 
 # Force UTF-8 encoding untuk terminal Windows
 if sys.stdout.encoding.lower() != "utf-8":
@@ -168,7 +171,14 @@ def run_jarvis():
         )
 
         is_play_command = any(k in command for k in ["play", "song", "music", "youtube"])
-        is_news_command = any(k in command for k in ["news", "headline", "update", "berita", "tech", "technology", "ai", "science"])
+        is_news_command = any(k in command for k in [
+                            "news",
+                            "headline",
+                            "tech news",
+                            "technology news",
+                            "science news",
+                            "berita"
+                        ])
 
         if has_wake_word or is_shutdown_command or is_play_command or is_news_command:
             clean_cmd = command
@@ -215,7 +225,10 @@ def run_jarvis():
                     speak("What song would you like to play, Sir?")
 
             else:
-                speak("Command not recognized, Sir.")
+                if clean_cmd: speak("Let me think about that, Sir.") 
+                response = ask_gemini(clean_cmd)
+
+        speak(response)
 
 
 if __name__ == "__main__":
